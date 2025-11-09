@@ -1,0 +1,62 @@
+create database mydb;
+use mydb;
+
+-- 1️⃣ Create STUD table (run once)
+DROP TABLE IF EXISTS Stud;
+
+CREATE TABLE Stud (
+  Roll INT PRIMARY KEY,
+  Name VARCHAR(50),
+  Att INT,
+  Status VARCHAR(2)
+);
+
+-- 2️⃣ Insert sample data
+INSERT INTO Stud VALUES (101, 'Rohan', 80, NULL);
+INSERT INTO Stud VALUES (102, 'Priya', 60, NULL);
+INSERT INTO Stud VALUES (103, 'Amit', 90, NULL);
+
+
+-- 3️⃣ Stored Procedure to Check Attendance & Update Status
+DELIMITER $$
+
+CREATE PROCEDURE Check_Attendance(IN v_roll_no INT)
+BEGIN
+    DECLARE v_attendance INT;
+    DECLARE v_status VARCHAR(2);
+
+    -- Retrieve attendance
+    SELECT Att INTO v_attendance
+    FROM Stud
+    WHERE Roll = v_roll_no;
+
+    -- Decision logic
+    IF v_attendance < 75 THEN
+        SET v_status = 'D';   -- Detained
+        SELECT 'Term not granted' AS Message;
+    ELSE
+        SET v_status = 'ND';  -- Not Detained
+        SELECT 'Term granted' AS Message;
+    END IF;
+
+    -- Update table
+    UPDATE Stud
+    SET Status = v_status
+    WHERE Roll = v_roll_no;
+
+    SELECT 'Status updated successfully.' AS Message;
+
+END $$
+
+DELIMITER ;
+
+
+//To Execute / Run the Procedure
+
+CALL Check_Attendance(102);
+
+
+//Output will be something like:
+
+Term not granted
+Status updated successfully.

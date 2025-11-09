@@ -1,0 +1,89 @@
+create database mydb;
+use mydb;
+
+-- Drop tables if they exist
+DROP TABLE IF EXISTS Stud_Marks;
+DROP TABLE IF EXISTS Result;
+
+-- Create tables
+CREATE TABLE Stud_Marks (
+    name VARCHAR(100),
+    total_marks INT
+);
+
+CREATE TABLE Result (
+    roll_no INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    class VARCHAR(50)
+);
+
+-- Create Stored Procedure
+DELIMITER $$
+
+CREATE PROCEDURE proc_Grade(
+    IN p_student_name VARCHAR(100),
+    IN p_total_marks INT
+)
+BEGIN
+    DECLARE v_class VARCHAR(50);
+
+    IF p_total_marks BETWEEN 990 AND 1500 THEN
+        SET v_class = 'Distinction';
+    ELSEIF p_total_marks BETWEEN 900 AND 989 THEN
+        SET v_class = 'First Class';
+    ELSEIF p_total_marks BETWEEN 825 AND 899 THEN
+        SET v_class = 'Higher Second Class';
+    ELSE
+        SET v_class = 'Pass Class';
+    END IF;
+
+    INSERT INTO Result (name, class)
+    VALUES (p_student_name, v_class);
+
+END $$
+
+DELIMITER ;
+
+-- Insert sample data
+INSERT INTO Stud_Marks VALUES ('Alice', 1050);
+INSERT INTO Stud_Marks VALUES ('Bob', 950);
+INSERT INTO Stud_Marks VALUES ('Charlie', 880);
+INSERT INTO Stud_Marks VALUES ('David', 700);
+
+-- Process each record
+DELIMITER $$
+
+CREATE PROCEDURE Process_Students()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE v_name VARCHAR(100);
+    DECLARE v_marks INT;
+
+    DECLARE cur CURSOR FOR SELECT name, total_marks FROM Stud_Marks;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO v_name, v_marks;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        CALL proc_Grade(v_name, v_marks);
+
+    END LOOP;
+
+    CLOSE cur;
+
+    SELECT 'Student categorization complete. Check Result table.' AS Message;
+
+END $$
+
+DELIMITER ;
+
+-- Run the processing
+CALL Process_Students();
+
+-- View Result table
+SELECT * FROM Result;

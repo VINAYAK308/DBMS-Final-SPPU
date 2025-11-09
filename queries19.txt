@@ -1,0 +1,46 @@
+-- 1. Create Database and use it
+CREATE DATABASE IF NOT EXISTS chits19;
+USE chits19;
+
+-- 2. Create Employee Table
+CREATE TABLE emp (
+    Eno INT PRIMARY KEY AUTO_INCREMENT,      -- Primary Key with auto increment
+    Ename VARCHAR(50) NOT NULL,              -- Not Null constraint
+    Address VARCHAR(100) DEFAULT 'Nashik',   -- Default value
+    Joindate DATE,
+    Salary DECIMAL(10,2)
+);
+
+-- Set starting AUTO_INCREMENT to 101
+ALTER TABLE emp AUTO_INCREMENT = 101;
+
+-- 3. Add Post column
+ALTER TABLE emp
+ADD COLUMN Post VARCHAR(50);
+
+-- 4. Insert data
+INSERT INTO emp (Ename, Address, Joindate, Salary, Post) VALUES
+('Amit', 'Pune', '2023-05-10', 35000, 'Manager'),
+('Sneha', DEFAULT, '2022-11-15', 28000, 'Analyst'),
+('Ravi', 'Mumbai', '2024-01-20', 30000, 'Developer'),
+('Neha', DEFAULT, '2023-07-01', 25000, 'Clerk');
+
+-- 5. Create index on Ename
+CREATE INDEX idx_ename ON emp(Ename);
+
+-- 6. Show index
+SHOW INDEX FROM emp;
+
+-- 7. Create a view
+CREATE OR REPLACE VIEW emp_view AS
+SELECT Ename, Salary
+FROM emp;
+
+-- 8. Query the view
+SELECT * FROM emp_view;
+
+-- 9. Describe the emp table
+DESCRIBE emp;
+
+-- 10. View all employee data
+SELECT * FROM emp;

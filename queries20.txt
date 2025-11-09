@@ -1,0 +1,57 @@
+use college;
+db.student.createCollection();
+db.student.insertMany([
+  { rollno:1, name:"Navin", subject:"DMSA", marks:78 },
+  { rollno:2, name:"Anusha", subject:"OSD", marks:75 },
+  { rollno:3, name:"Ravi", subject:"TOC", marks:69 },
+  { rollno:4, name:"Veena", subject:"TOC", marks:70 },
+  { rollno:5, name:"Pravini", subject:"OSD", marks:80 },
+  { rollno:6, name:"Reena", subject:"DMSA", marks:50 },
+  { rollno:7, name:"Geeta", subject:"CN", marks:90 },
+  { rollno:8, name:"Akash", subject:"CN", marks:85 }
+]);
+
+
+//Indexing Operations
+db.student.createIndex({ name:1 });
+db.student.createIndex({ subject:1, marks:-1 });
+db.student.createIndex({ rollno:1 }, { unique:true });
+db.student.getIndexes();
+db.student.dropIndex("name_1");
+
+Q1.
+db.student.aggregate([
+  { $group: { _id:"$subject", MaxMarks:{ $max:"$marks" } } }
+]);
+
+Q2.
+db.student.aggregate([
+  { $group: { _id:"$subject", MinMarks:{ $min:"$marks" } } }
+]);
+
+Q3.
+db.student.aggregate([
+  { $group: { _id:"$subject", TotalMarks:{ $sum:"$marks" } } }
+]);
+
+Q4.
+db.student.aggregate([
+  { $group: { _id:"$subject", AvgMarks:{ $avg:"$marks" } } }
+]);
+
+Q5.
+db.student.aggregate([
+  { $group: { _id:"$subject", FirstRecord:{ $first:"$name" } } }
+]);
+
+Q6.
+db.student.aggregate([
+  { $group: { _id:"$subject", LastRecord:{ $last:"$name" } } }
+]);
+
+Q7. (same Question repeat in Q8.)
+db.student.aggregate([
+  { $group: { _id:"$subject", CountStudents:{ $sum:1 } } }
+]);
+
+

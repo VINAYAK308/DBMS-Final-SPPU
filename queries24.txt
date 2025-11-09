@@ -1,0 +1,79 @@
+CREATE DATABASE chit24;
+use chit24;
+-- Create Tables
+CREATE TABLE Emp (
+    emp_id INT PRIMARY KEY,
+    ename VARCHAR(50),
+    street VARCHAR(50),
+    city VARCHAR(50)
+);
+
+CREATE TABLE Company (
+    c_id INT PRIMARY KEY,
+    cname VARCHAR(50),
+    city VARCHAR(50)
+);
+
+CREATE TABLE Works (
+    emp_id INT,
+    c_id INT,
+    ename VARCHAR(50),
+    cname VARCHAR(50),
+    sal DECIMAL(10,2),
+    FOREIGN KEY (emp_id) REFERENCES Emp(emp_id),
+    FOREIGN KEY (c_id) REFERENCES Company(c_id)
+);
+
+CREATE TABLE Manager (
+    mgr_id INT PRIMARY KEY,
+    mgrname VARCHAR(50)
+);
+
+-- Insert Values
+INSERT INTO Emp VALUES
+(1, 'Rohan', 'MG Road', 'Pune'),
+(2, 'Sanjay', 'Baner', 'Mumbai'),
+(3, 'Neha', 'Kothrud', 'Pune'),
+(4, 'Amit', 'Hinjewadi', 'Nashik');
+
+INSERT INTO Company VALUES
+(101, 'ABC', 'Mumbai'),
+(102, 'Bosch', 'Pune'),
+(103, 'Mbank', 'Delhi'),
+(104, 'SBC', 'Pune');
+
+INSERT INTO Works VALUES
+(1, 101, 'Rohan', 'ABC', 18000),
+(2, 103, 'Sanjay', 'Mbank', 22000),
+(3, 102, 'Neha', 'Bosch', 25000),
+(4, 104, 'Amit', 'SBC', 55000);
+
+INSERT INTO Manager VALUES
+(501, 'Kiran'),
+(502, 'Meera'),
+(503, 'Ramesh');
+
+-- i. Update company ABC location to Pune
+UPDATE Company
+SET city = 'Pune'
+WHERE cname = 'ABC';
+
+-- ii. Salary raise for Mbank employees
+UPDATE Works
+SET sal = sal * 1.10
+WHERE cname = 'Mbank' AND sal <= 20000;
+
+UPDATE Works
+SET sal = sal * 1.03
+WHERE cname = 'Mbank' AND sal > 20000;
+
+-- iii. Employees working in BOSCH in Pune
+SELECT e.ename
+FROM Emp e
+JOIN Works w ON e.emp_id = w.emp_id
+JOIN Company c ON w.c_id = c.c_id
+WHERE c.cname = 'Bosch' AND c.city = 'Pune';
+
+-- iv. Delete works record for SBC employees earning > 50,000
+DELETE FROM Works
+WHERE cname = 'SBC' AND sal > 50000;

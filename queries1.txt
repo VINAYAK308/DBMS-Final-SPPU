@@ -1,0 +1,86 @@
+create database mydb;
+use mydb;
+
+-- 1. Create Tables
+DROP TABLE IF EXISTS Account;
+DROP TABLE IF EXISTS Customer;
+
+CREATE TABLE Customer (
+    C_id INT PRIMARY KEY,
+    Cname VARCHAR(50),
+    City VARCHAR(50)
+);
+
+CREATE TABLE Account (
+    Acc_no INT PRIMARY KEY,
+    C_id INT,
+    Acc_Type VARCHAR(20),
+    Amount DECIMAL(10,2),
+    FOREIGN KEY (C_id) REFERENCES Customer(C_id)
+);
+
+-- 2. Insert Data
+INSERT INTO Customer (C_id, Cname, City) VALUES
+(1, 'Pooja', 'Pune'),
+(2, 'Ravi', 'Mumbai'),
+(3, 'Sneha', 'Pune'),
+(4, 'Karan', 'Delhi'),
+(5, 'Neha', 'Mumbai');
+
+INSERT INTO Account (Acc_no, C_id, Acc_Type, Amount) VALUES
+(101, 1, 'Saving', 25000),
+(102, 2, 'Current', 40000),
+(103, 3, 'Saving', 15000),
+(104, 4, 'Current', 10000),
+(105, 5, 'Saving', 30000);
+
+-- 3. Queries
+
+-- 3.1 Customers with Saving account
+SELECT C.Cname, A.Acc_Type, A.Amount
+FROM Customer C
+JOIN Account A ON C.C_id = A.C_id
+WHERE A.Acc_Type = 'Saving';
+
+-- 3.2 LEFT JOIN
+SELECT C.C_id, C.Cname, C.City, A.Acc_Type, A.Amount
+FROM Customer C
+LEFT JOIN Account A ON C.C_id = A.C_id;
+
+-- 3.3 RIGHT JOIN
+SELECT C.C_id, C.Cname, C.City, A.Acc_Type, A.Amount
+FROM Customer C
+RIGHT JOIN Account A ON C.C_id = A.C_id;
+
+-- 3.4 Customers living in the same city as Pooja
+SELECT *
+FROM Customer
+WHERE City = (SELECT City FROM Customer WHERE Cname = 'Pooja');
+
+-- 3.5 Accounts having less than average amount
+SELECT *
+FROM Account
+WHERE Amount < (SELECT AVG(Amount) FROM Account);
+
+-- 3.6 C_id with maximum amount
+SELECT C_id
+FROM Account
+WHERE Amount = (SELECT MAX(Amount) FROM Account);
+
+-- 3.7 Minimum amount per Acc_Type
+SELECT A.Acc_Type, A.Amount
+FROM Account A
+WHERE A.Amount = (
+    SELECT MIN(Amount)
+    FROM Account
+    WHERE Acc_Type = A.Acc_Type
+);
+
+-- 3.8 Amount greater than any Saving account
+SELECT Amount
+FROM Account
+WHERE Amount > ANY (
+    SELECT Amount
+    FROM Account
+    WHERE Acc_Type = 'Saving'
+);

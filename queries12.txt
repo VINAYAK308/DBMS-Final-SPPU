@@ -1,0 +1,44 @@
+create database mydb;
+use mydb;
+
+CREATE TABLE Library (
+    Book_ID INT PRIMARY KEY,
+    Book_Name VARCHAR(100),
+    Author VARCHAR(100),
+    Price DECIMAL(10,2)
+);
+
+CREATE TABLE Library_Audit (
+    Audit_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Book_ID INT,
+    Book_Name VARCHAR(100),
+    Author VARCHAR(100),
+    Price DECIMAL(10,2),
+    Action_Type VARCHAR(20),
+    Action_Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+DELIMITER $$
+
+CREATE TRIGGER trg_Library_After_Update
+AFTER UPDATE ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO Library_Audit(Book_ID, Book_Name, Author, Price, Action_Type)
+    VALUES(OLD.Book_ID, OLD.Book_Name, OLD.Author, OLD.Price, 'UPDATE');
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER trg_Library_After_Delete
+AFTER DELETE ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO Library_Audit(Book_ID, Book_Name, Author, Price, Action_Type)
+    VALUES(OLD.Book_ID, OLD.Book_Name, OLD.Author, OLD.Price, 'DELETE');
+END$$
+
+DELIMITER ;

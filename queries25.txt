@@ -1,0 +1,79 @@
+-- Create tables
+CREATE DATABASE chit25;
+use chit25;
+CREATE TABLE Empl (
+    e_no INT PRIMARY KEY,
+    e_name VARCHAR(50),
+    post VARCHAR(50),
+    pay_rate DECIMAL(10, 2)
+);
+
+CREATE TABLE Position (
+    pos_no INT PRIMARY KEY,
+    post VARCHAR(50)
+);
+
+CREATE TABLE Duty_alloc (
+    pos_no INT,
+    e_no INT,
+    month VARCHAR(20),
+    year INT,
+    shift VARCHAR(20)
+);
+
+-- Insert sample data
+INSERT INTO Empl VALUES
+(123, 'Amit Sharma', 'Clerk', 22000.00),
+(124, 'Sachin Tendulkar', 'Manager', 50000.00),
+(125, 'Rahul Dravid', 'Analyst', 45000.00),
+(126, 'Virat Kohli', 'Manager', 65000.00),
+(127, 'Rohit Sharma', 'Clerk', 25000.00),
+(128, 'Jasprit Bumrah', 'Manager', 50000.00);
+
+INSERT INTO Position VALUES
+(1, 'Clerk'),
+(2, 'Manager'),
+(3, 'Analyst');
+
+INSERT INTO Duty_alloc VALUES
+(1, 123, 'April', 2003, 'first'),
+(2, 124, 'April', 2003, 'first'),
+(2, 126, 'April', 2003, 'second'),
+(2, 128, 'April', 2003, 'first');
+
+-- i. Get duty allocation details for e_no 123 for the first shift in April 2003
+SELECT *
+FROM Duty_alloc
+WHERE e_no = 123
+  AND month = 'April'
+  AND year = 2003
+  AND shift = 'first';
+
+-- ii. Get employees whose pay rate is >= pay rate of 'Sachin Tendulkar'
+SELECT e_name, post, pay_rate
+FROM Empl
+WHERE pay_rate >= (SELECT pay_rate 
+                   FROM Empl 
+                   WHERE e_name = 'Sachin Tendulkar');
+
+-- iii. Create a view for min, max, and avg salary for all posts
+CREATE VIEW PostSalarySummary AS
+SELECT
+    post,
+    MIN(pay_rate) AS min_salary,
+    MAX(pay_rate) AS max_salary,
+    AVG(pay_rate) AS avg_salary
+FROM Empl
+GROUP BY post;
+
+-- To view the summary
+SELECT * FROM PostSalarySummary;
+
+-- iv. Get count of different employees on each shift having post 'Manager'
+SELECT
+    da.shift,
+    COUNT(DISTINCT e.e_no) AS number_of_managers
+FROM Empl e
+JOIN Duty_alloc da ON e.e_no = da.e_no
+WHERE e.post = 'Manager'
+GROUP BY da.shift;

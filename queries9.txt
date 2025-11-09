@@ -1,0 +1,27 @@
+
+use mydb;
+Q1.
+db.orderinfo.insertOne({
+  cust_id: 123,
+  cust_name: "abc",
+  status: "A",
+  price: 250
+});
+Q2.
+db.orderinfo.aggregate([
+  { $match: { status: "A" } },
+  { $group: { _id: "$cust_name", avgPrice: { $avg: "$price" } } }
+]);
+Q3.
+db.orderinfo.find(
+  { price: { $gte: 100, $lte: 1000 } },
+  { status: 1, _id: 0 }
+);
+
+Q4.
+db.orderinfo.find({}, { _id: 0 });
+
+Q5.
+db.orderinfo.createIndex({ cust_id: 1 })
+
+db.orderinfo.find({ cust_id: 123 })

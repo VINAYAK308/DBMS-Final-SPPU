@@ -1,0 +1,35 @@
+use mydb;
+
+db.movies.insertOne({
+  name: "Movie1",
+  type: "action",
+  budget: 1000000,
+  producer: {
+    name: "producer1",
+    address: "PUNE"
+  }
+});
+
+Q1.
+db.movies.find(
+  { budget: { $gt: 100000 } },
+  { name: 1, _id: 0 }
+);
+
+Q2.
+db.movies.find(
+  { "producer.address": "PUNE" },
+  { "producer.name": 1, _id: 0 }
+);
+
+Q3.
+db.movies.updateMany(
+  { type: "action" },
+  { $set: { type: "horror" } }
+);
+
+Q4.
+db.movies.find({ "producer.name": "producer1" });
+
+
+

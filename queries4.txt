@@ -1,0 +1,86 @@
+-- =====================================
+-- MySQL Script: Students, Instructor, Course
+-- =====================================
+
+
+create database mydb;
+use mydb;
+
+-- 2️⃣ Create Tables
+CREATE TABLE students (
+    S_ID INT PRIMARY KEY,
+    S_name VARCHAR(50),
+    dept_name VARCHAR(30),
+    tot_cred INT
+);
+
+CREATE TABLE instructor (
+    T_ID INT PRIMARY KEY, 
+    i_name VARCHAR(30),
+    dept_name VARCHAR(30),
+    salary INT
+);
+
+CREATE TABLE course (
+    course_id INT PRIMARY KEY,
+    title VARCHAR(30),
+    dept_name VARCHAR(30),
+    credits INT
+);
+
+-- 3️⃣ Insert Data
+INSERT INTO instructor VALUES
+(1, 'Amol', 'Computer', 48000),
+(2, 'Amit', 'Mechanical', 42000),
+(3, 'Ravi', 'Computer', 55000),
+(4, 'Sneha', 'IT', 39000),
+(5, 'Karan', 'Electronics', 60000);
+
+INSERT INTO students VALUES
+(101, 'Amisha', 'Computer', 120),
+(102, 'Samir', 'IT', 110),
+(103, 'Kamlesh', 'Computer', 115),
+(104, 'Rohit', 'Mechanical', 100),
+(105, 'Tamanna', 'Computer', 125);
+
+INSERT INTO course VALUES
+(201, 'DBMS', 'Computer', 4),
+(202, 'Networks', 'Computer', 3),
+(203, 'Thermo', 'Mechanical', 4);
+
+-- =====================================
+-- 4️⃣ Queries
+-- =====================================
+
+-- i. Average salary in departments where avg > 42000
+SELECT dept_name, AVG(salary) AS avg_salary
+FROM instructor
+GROUP BY dept_name
+HAVING AVG(salary) > 42000;
+
+-- ii. Increase salary of instructors in Computer dept by 10%
+UPDATE instructor
+SET salary = salary * 1.10
+WHERE dept_name = 'Computer';
+
+-- iii. Names of instructors not ‘Amol’ or ‘Amit’
+SELECT i_name
+FROM instructor
+WHERE i_name NOT IN ('Amol', 'Amit');
+
+-- iv. Names of students containing 'am' (case-insensitive)
+SELECT S_name
+FROM students
+WHERE S_name LIKE '%am%';
+
+-- v. Names of Computer dept students taking DBMS
+SELECT s.S_name
+FROM students s
+JOIN course c ON s.dept_name = c.dept_name
+WHERE s.dept_name = 'Computer'
+  AND c.title = 'DBMS';
+
+-- vi. View all tables (optional)
+SELECT * FROM instructor;
+SELECT * FROM students;
+SELECT * FROM course;

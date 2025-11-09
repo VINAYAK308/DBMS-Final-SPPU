@@ -1,0 +1,71 @@
+create database mydb;
+use mydb;
+
+-- Step 1: Drop & Create Borrower table
+DROP TABLE IF EXISTS Borrower;
+
+CREATE TABLE Borrower (
+    Rollin       INT,
+    NameofBook   VARCHAR(50),
+    DateofIssue  DATE,
+    Status       CHAR(1)
+);
+
+-- Step 2: Drop & Create Fine table
+DROP TABLE IF EXISTS Fine;
+
+CREATE TABLE Fine (
+    Roll_no INT,
+    Fine_Date DATE,
+    Amt INT
+);
+
+-- Step 3: Insert sample data
+INSERT INTO Borrower VALUES (101, 'Mathematics', CURDATE() - INTERVAL 20 DAY, 'I');
+INSERT INTO Borrower VALUES (102, 'Physics', CURDATE() - INTERVAL 40 DAY, 'I');
+INSERT INTO Borrower VALUES (103, 'Chemistry', CURDATE() - INTERVAL 10 DAY, 'I');
+
+
+-- Step 4: Stored Procedure to Return Book and Calculate Fine
+DELIMITER $$
+
+CREATE PROCEDURE Return_Book(IN v_roll_no INT, IN v_book_name VARCHAR(50))
+BEGIN
+    DECLARE v_date_of_issue DATE;
+    DECLARE v_days_overdue INT;
+    DECLARE v_fine_amount INT DEFAULT 0;
+
+    -- Retrieve issue date
+    SELECT DateofIssue INTO v_date_of_issue
+    FROM Borrower
+    WHERE Rollin = v_roll_no
+      AND NameofBook = v_book_name
+      AND Status = 'I';
+
+    -- Calculate overdue days
+    SET v_days_overdue = DATEDIFF(CURDATE(), v_date_of_issue);
+
+    -- Fine conditions
+    IF v_days_overdue > 30 THEN
+        SET v_fine_amount = (v_days_overdue - 30) * 50 + 30 * 5;
+    ELSEIF v_days_overdue >= 15 THEN
+        SET v_fine_amount = v_days_overdue * 5;
+    END IF;
+
+    -- Update status to Returned
+    UPDATE Borrower
+    SET Status = 'R'
+    WHERE Rollin = v_roll_no AND NameofBook = v_book_name;
+
+    -- Insert fine into fine table if applicable
+    IF v_fine_amount > 0 THEN
+        INSERT INTO Fine VALUES (v_roll_no, CURDATE(), v_fine_amount);
+        SELECT CONCAT('Book returned. Fine of Rs. ', v_fine_amount,
+                      ' applied for Roll No: ', v_roll_no) AS Message;
+    ELSE
+        SELECT CONCAT('Book returned. No fine applied for Roll No: ', v_roll_no) AS Message;
+    END IF;
+
+END $$
+
+DELIMITER ;

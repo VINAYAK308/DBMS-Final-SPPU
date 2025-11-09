@@ -1,0 +1,67 @@
+use mydb   // or any database
+
+db.createCollection("orderinfo")
+
+db.orderinfo.insertOne({
+   cust_id:123,
+   cust_name:"abc",
+   status:"A",
+   price:250
+})
+
+Q1.
+db.orderinfo.updateOne(
+   { cust_id:123 },
+   { $set: { age: 30 } }
+)
+
+
+Q2.
+//Create Compound Index
+db.orderinfo.createIndex({ cust_id: 1, status: 1 }) 
+
+//Query Using The Index
+db.orderinfo.find({ cust_id: 123, status: "A" }).explain("executionStats")
+
+//Find Duplicate Documents
+db.orderinfo.aggregate([
+  {
+    $group: {
+      _id: { cust_id: "$cust_id", cust_name: "$cust_name", status: "$status", price: "$price" },
+      uniqueIds: { $addToSet: "$_id" },
+      count: { $sum: 1 }
+    }
+  },
+  { $match: { count: { $gt: 1 } } }
+]);
+
+//Remove One Duplicate Manually
+//Replace ObjectId("...") with one id returned by the above query.
+db.orderinfo.deleteOne({ _id: ObjectId("ID_FROM_RESULT") });
+
+//Now Create a Unique Index
+db.orderinfo.createIndex(
+  { cust_id: 1, cust_name: 1, status: 1, price: 1 },
+  { unique: true }
+);
+
+Q3.
+db.orderinfo.aggregate([
+  {
+    $group: {
+      _id: { customer: "$cust_id", status: "$status" },
+      averagePrice: { $avg: "$price" }
+    }
+  }
+]);
+
+Q4.
+db.orderinfo.updateMany(
+  { status: "B" },
+  { $set: { cust_name: "Updated Name" } }
+);
+
+db.orderinfo.find({ status: "B" });
+
+
+

@@ -1,0 +1,77 @@
+create database mydb;
+use mydb;
+
+-- Drop tables if they exist
+DROP TABLE IF EXISTS N_RollCall;
+DROP TABLE IF EXISTS O_RollCall;
+
+-- Create N_RollCall table (source)
+CREATE TABLE N_RollCall (
+    roll_number INT PRIMARY KEY,
+    student_name VARCHAR(50),
+    attendance_status VARCHAR(10)
+);
+
+-- Create O_RollCall table (target)
+CREATE TABLE O_RollCall (
+    roll_number INT PRIMARY KEY,
+    student_name VARCHAR(50),
+    attendance_status VARCHAR(10)
+);
+
+-- Insert sample data
+INSERT INTO N_RollCall VALUES (1, 'Alice', 'Present');
+INSERT INTO N_RollCall VALUES (2, 'Bob', 'Absent');
+INSERT INTO N_RollCall VALUES (3, 'Charlie', 'Present');
+INSERT INTO N_RollCall VALUES (4, 'David', 'Present');
+
+
+-- Stored Procedure to MERGE Data
+DELIMITER $$
+
+CREATE PROCEDURE Merge_RollCall()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE v_roll INT;
+    DECLARE v_name VARCHAR(50);
+    DECLARE v_status VARCHAR(10);
+
+    -- Cursor to read data from N_RollCall
+    DECLARE cur CURSOR FOR 
+        SELECT roll_number, student_name, attendance_status FROM N_RollCall;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO v_roll, v_name, v_status;
+
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        -- Check if roll exists in O_RollCall
+        IF EXISTS (SELECT 1 FROM O_RollCall WHERE roll_number = v_roll) THEN
+            SELECT CONCAT('Roll Number ', v_roll, ' already exists in O_RollCall. Skipping.') AS Message;
+        ELSE
+            INSERT INTO O_RollCall VALUES (v_roll, v_name, v_status);
+            SELECT CONCAT('Roll Number ', v_roll, ' inserted into O_RollCall.') AS Message;
+        END IF;
+
+    END LOOP;
+
+    CLOSE cur;
+
+    SELECT 'Data Merge Completed.' AS Message;
+
+END $$
+
+DELIMITER ;
+
+
+//Run the Procedure
+CALL Merge_RollCall();
+
+//View Final Merged Data
+SELECT * FROM O_RollCall;

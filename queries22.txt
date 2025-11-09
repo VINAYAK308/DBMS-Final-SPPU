@@ -1,0 +1,45 @@
+use mydb   // or any database
+
+db.createCollection("orderinfo")
+
+db.orderinfo.insertOne({
+   cust_id:123,
+   cust_name:"abc",
+   status:"A",
+   price:250
+})
+
+Q1.
+db.orderinfo.find(
+  { price: { $gte: 250, $lte: 450 } },
+  { cust_name: 1, _id: 0 }
+);
+
+Q2.
+//Increment by 10 for cust_id 123:
+db.orderinfo.updateOne(
+  { cust_id: 123 },
+  { $inc: { price: 10 } }
+);
+
+//Decrement by 5 for cust_id 124:
+db.orderinfo.updateOne(
+  { cust_id: 124 },
+  { $inc: { price: -5 } }
+);
+
+
+Q3.
+//Remove any one field from all documents
+db.orderinfo.updateMany(
+  {},
+  { $unset: { status: "" } }
+);
+
+Q4.
+//Find the customer whose status is 'A' OR price is 250 (or both)
+db.orderinfo.find(
+  { $or: [ { status: "A" }, { price: 250 } ] },
+  { cust_name: 1, _id: 0 }
+);
+

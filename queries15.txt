@@ -1,0 +1,56 @@
+Q1.
+use Institute
+
+Q2.
+db.createCollection("Students")
+
+Q3.
+db.Students.insertMany([
+  { RollNo: 1, Name: "Amit", Age: 16, Branch: "IT", Address: { City: "Pune", State: "MH" }, Hobbies: ["Cricket", "Reading"] },
+  { RollNo: 2, Name: "Sneha", Age: 14, Branch: "ENTC", Address: { City: "Mumbai", State: "MH" }, Hobbies: ["Drawing", "Music"] },
+  { RollNo: 3, Name: "Rahul", Age: 17, Branch: "Mechanical", Address: { City: "Pune", State: "MH" }, Hobbies: ["Football", "Travel"] },
+  { RollNo: 4, Name: "Anjali", Age: 15, Branch: "Computer", Address: { City: "Nashik", State: "MH" }, Hobbies: ["Singing", "Dance"] },
+  { RollNo: 5, Name: "Priya", Age: 18, Branch: "Civil", Address: { City: "Pune", State: "MH" }, Hobbies: ["Sketching", "Reading"] },
+  { RollNo: 6, Name: "Vikas", Age: 19, Branch: "IT", Address: { City: "Mumbai", State: "MH" }, Hobbies: ["Chess", "Music"] },
+  { RollNo: 7, Name: "Akash", Age: 14, Branch: "Electrical", Address: { City: "Pune", State: "MH" }, Hobbies: ["Gaming", "Cricket"] },
+  { RollNo: 8, Name: "Riya", Age: 20, Branch: "Computer", Address: { City: "Satara", State: "MH" }, Hobbies: ["Reading", "Art"] },
+  { RollNo: 9, Name: "Meera", Age: 16, Branch: "IT", Address: { City: "Pune", State: "MH" }, Hobbies: ["Dance", "Singing"] },
+  { RollNo: 10, Name: "Arjun", Age: 18, Branch: "Mechanical", Address: { City: "Pune", State: "MH" }, Hobbies: ["Football", "Music"] }
+])
+
+Q4.
+db.Students.find()
+
+Q5.
+db.Students.find({ Age: { $gt: 15 } })
+
+Q6.
+db.Students.find().sort({ Name: 1 })
+
+Q7.
+db.Students.updateOne({ RollNo: 3 }, { $set: { Branch: "Computer" } })
+
+Q8.
+db.Students.deleteOne({ RollNo: 1 })
+
+Q9.
+db.Students.find({ Name: /^A/i })
+
+Q10.
+db.Students.countDocuments()
+
+Q11.
+db.Students.find().limit(5)
+
+Q12.
+db.Students.find().skip(3)
+
+Q13.
+db.Students.find({ "Address.City": "Pune" })
+
+Q14.
+db.Students.find({}, { _id: 0, Name: 1 })
+
+Q15.
+db.Students.drop()
+

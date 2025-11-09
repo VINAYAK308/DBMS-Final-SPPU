@@ -1,0 +1,51 @@
+use cityDB;
+
+db.city.insertOne({
+  city: "pune",
+  type: "urban",
+  state: "MH",
+  population: "5600000"
+});
+
+Q1.
+db.city.mapReduce(
+  // Map function
+  function () {
+    emit(this.state, parseInt(this.population));
+  },
+  // Reduce function
+  function (key, values) {
+    return Array.sum(values);
+  },
+  // Output
+  {
+    out: { inline: 1 }
+  }
+);
+
+
+Q2.
+db.city.mapReduce(
+  function () {
+    emit(this.city, parseInt(this.population));
+  },
+  function (key, values) {
+    return Array.sum(values);
+  },
+  {
+    out: { inline: 1 }
+  }
+);
+
+Q3.
+db.city.mapReduce(
+  function () {
+    emit(this.type, parseInt(this.population));
+  },
+  function (key, values) {
+    return Array.sum(values);
+  },
+  {
+    out: { inline: 1 }
+  }
+);
