@@ -49,6 +49,8 @@ public class EmployeeDB {
 }
 
 
+// Compile (with correct jar name)
+// javac -cp .:"mysql-connector-j-9.5.0.jar" EmployeeDB.java
 
 // (base) trushantramdasjadhav@Trushants-MacBook-Air DBMS-Final % java -cp .:"mysql-connector-j-9.5.0.jar" EmployeeDB 
 
