@@ -69,3 +69,44 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
+Test it
+Case 1: Borrower with Roll 101 (issued 20 days ago)
+
+Days = 20 → Between 15 and 30 → Fine = days * 5 = 20 * 5 = ₹100
+
+CALL Return_Book(101, 'Mathematics');
+
+
+
+Case 2: Borrower with Roll 102 (issued 40 days ago)
+
+Days = 40 → More than 30
+Fine = (40 - 30) * 50 + 30 * 5
+= (10 × 50) + (30 × 5)
+= 500 + 150
+= ₹650
+
+CALL Return_Book(102, 'Physics');
+
+
+Case 3: Borrower with Roll 103 (issued 10 days ago)
+
+Days = 10 → Less than 15 → No fine
+
+CALL Return_Book(103, 'Chemistry');
+
+
+Check the Fine Table
+SELECT * FROM Fine;
+
+
+You should see entries only for Roll 101 and 102.
+
+
+Check Borrower Status
+SELECT * FROM Borrower;
+
+
+All returned books should now have Status = 'R'.
