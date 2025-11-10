@@ -42,3 +42,30 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+
+🔄 Test UPDATE Trigger
+UPDATE Library 
+SET Price = 700.00 
+WHERE Book_ID = 1;
+
+
+Check audit table:
+
+SELECT * FROM Library_Audit;
+
+
+You will see entry with Action_Type = 'UPDATE' and old price 550.00.
+
+❌ Test DELETE Trigger
+DELETE FROM Library
+WHERE Book_ID = 2;
+
+
+Check audit table again:
+
+SELECT * FROM Library_Audit;
+
+
+You will now see entry with Action_Type = 'DELETE'.
