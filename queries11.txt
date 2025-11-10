@@ -39,3 +39,22 @@ BEGIN
     VALUES (OLD.Book_ID, OLD.Book_Name, OLD.Author, OLD.Price, 'DELETE');
 END //
 DELIMITER ;
+
+
+
+Now Test Your Triggers
+1️⃣ Insert some records:
+INSERT INTO Library (Book_ID, Book_Name, Author, Price)
+VALUES
+(101, 'DBMS', 'Navathe', 500),
+(102, 'Operating System', 'Galvin', 650),
+(103, 'Data Structures', 'Lipschutz', 450);
+
+2️⃣ Update a record (Triggers trg_library_before_update)
+UPDATE Library
+SET Price = 550
+WHERE Book_ID = 101;
+
+3️⃣ Delete a record (Triggers trg_library_before_delete)
+DELETE FROM Library
+WHERE Book_ID = 103;
